@@ -1,0 +1,103 @@
+﻿<div class="blade-content">
+    <div class="blade-inner">
+        <div class="inner-block">
+            <form class="form" ng-submit="add(pdForm)" name="pdForm" novalidate autocomplete="off">
+                <fieldset ng-if="!pb.currentEntity.multilanguage">
+                    <legend>New value</legend>
+                    <div class="form-group">
+                        <div class="form-input">
+                            <input ng-class="{'error' : pdForm.dictValue.$invalid && !pdForm.dictValue.$pristine}" required ng-model="newValue.value" ui-validate=" 'dictValueValidator($value)' " name="dictValue" focus-on="" placeholder="Enter value" />
+                        </div>
+                        <div class="form-error" ng-if="pdForm.dictValue.$dirty && pdForm.dictValue.$invalid">
+                            <span ng-if="pdForm.dictValue.$error.required">Required</span>
+                            <span ng-if="pdForm.dictValue.$error.validator">Duplicate key found</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn" ng-disabled="pdForm.$invalid" type="submit">Add</button>
+                    </div>
+                </fieldset>
+
+                <fieldset ng-if="pb.currentEntity.multilanguage">
+                    <legend>{{selectedItem ? 'Edit values' : 'New values'}}</legend>
+                    <div class="form-group">
+                        <div class="form-input __langs" ng-repeat="data in newValue.values">
+                            <ng-form name="valuesForm">
+                                <span class="flag flag-{{data.languageCode.substr(3).toLowerCase()}}"></span>
+                                <input ng-model="data.value" class="form-control" ng-required="$first" ui-validate=" 'dictValueValidator($value, data)' " name="mValue" placeholder="Enter value" />
+                                <div class="form-error" ng-if="valuesForm.mValue.$dirty && valuesForm.mValue.$invalid">
+                                    <span ng-if="valuesForm.mValue.$error.required">Required</span>
+                                    <span ng-if="valuesForm.mValue.$error.validator">Duplicate key found</span>
+                                </div>
+                            </ng-form>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn" ng-if="selectedItem" ng-click="cancel()">Cancel</button>
+                        <button class="btn" ng-disabled="pdForm.$invalid" type="submit">{{selectedItem ? 'Ok' : 'Add'}}</button>
+                    </div>
+                </fieldset>
+            </form>
+            <fieldset ng-if="pb.currentEntity.dictionaryValues.length > 0">
+                <legend>Current values</legend>
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="table-col">
+                                    <label class="form-control __checkbox">
+                                        <input type="checkbox" ng-model="selectedAll" ng-change="checkAll(selectedAll)" />
+                                        <span class="check"></span>
+                                    </label>
+                                </th>
+                                <th class="table-col">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-item" ng-repeat="data in pb.currentEntity.dictionaryValues" ng-class="{'__selected': data === selectedItem}" context-menu data-target="pd_menu_{{$index}}" ng-click='selectItem(data)' ng-if="!pb.currentEntity.multilanguage">
+                                <td class="table-col">
+                                    <label class="form-control __checkbox">
+                                        <input type="checkbox" ng-model="data.selected">
+                                        <span class="check"></span>
+                                    </label>
+                                </td>
+                                <td class="table-col">
+                                    <div class="form-input" ng-if="pb.currentEntity.valueType !== 'Number'">
+                                        <input required ng-model="data.value" type="text" />
+                                    </div>
+                                    <div class="form-input __number" ng-if="pb.currentEntity.valueType === 'Number'">
+                                        <input va-number required ng-model="data.value" step="1">
+                                    </div>
+                                    <ul role="menu" class="menu __context" id="pd_menu_{{$index}}">
+                                        <li class="menu-item" ng-click='delete($index)'>
+                                            <i class="menu-ico fa fa-trash-o"></i> Delete
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="table-item" ng-repeat="group in groupedValues" ng-class="{'__selected': group === selectedItem}" context-menu data-target="pd_multi_{{$index}}" ng-click='selectItem(group)' ng-if="pb.currentEntity.multilanguage">
+                                <td class="table-col">
+                                    <label class="form-control __checkbox">
+                                        <input type="checkbox" ng-model="group.selected">
+                                        <span class="check"></span>
+                                    </label>
+                                </td>
+                                <td class="table-col">
+                                    <div ng-repeat="data in group.values | orderBy:'languageCode'" style="margin:5px 0;">
+                                        <span class="flag flag-{{data.languageCode.substr(3, 2).toLowerCase()}}"></span>
+                                        {{data.value}}
+                                    </div>
+                                    <ul role="menu" class="menu __context" id="pd_multi_{{$index}}">
+                                        <li class="menu-item" ng-click='deleteMultilanguage(group.alias)'>
+                                            <i class="menu-ico fa fa-trash-o"></i> Delete
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+﻿<div class="blade-static">
+    <div class="form-group">
+        <div class="form-input __search">
+            <input placeholder="Search keyword..." ng-model="searchText">
+        </div>
+        <p class="form-count">Count: <span class="count">{{filteredEntities.length}}</span></p>
+    </div>
+</div>
+<div class="blade-content __medium-wide">
+    <div class="blade-inner">
+        <div class="inner-block">
+            <div class="text" ng-if="blade.currentEntities.length == 0">No Modules yet</div>
+            <div class="table-wrapper" ng-show="blade.currentEntities.length > 0">
+                <table class="table __normal">
+                    <thead>
+                        <tr>
+                            <th class="table-col __product-img">Icon</th>
+                            <th class="table-col">Module</th>
+                            <th class="table-col __version">Version</th>
+                            <th class="table-col __author">Author</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-item" ng-repeat="data in blade.currentEntities | filter:searchText as filteredEntities track by data.id" ng-class="{'__selected': data.id === selectedEntityId}" ng-click='blade.selectItem(data.id)'>
+                            <td class="table-col">
+                                <div class="product-img">
+                                     <div class="image" style="background-image: url({{data.iconUrl}})" ng-if="data.iconUrl"></div> 
+                                </div>
+                            </td>
+                            <td class="table-col">
+                                <span class="table-t" title="{{data.title}}">{{data.title}}</span>
+                                <span class="table-descr" title="{{data.description}}" style="overflow: hidden; text-overflow: ellipsis;">{{data.description}}</span>
+                            </td>
+                            <td class="table-col __version">
+                                <span>{{data.version}}</span>
+                            </td>
+                            <td class="table-col __author">
+                                <span ng-repeat="x in data.authors">{{x}} </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
